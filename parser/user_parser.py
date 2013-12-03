@@ -1,5 +1,5 @@
 file = "../data/trailhead1000"
-i = 1;
+i = 1
 
 def read_in_chunks(file_object, chunk_size=500):
   """Lazy function (generator) to read a file piece by piece.
