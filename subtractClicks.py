@@ -38,6 +38,7 @@ class SimpleModule:
 					urldomainmap[i] = (url, domain)
 			if prevDomain != 0 and startQuery:
 				clicklist[prevDomain] += 2
+				startQuery = False
 
 			# Enter module specific data here. 
 			if (element[2] == "C"):
