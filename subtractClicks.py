@@ -17,7 +17,7 @@ class SimpleModule:
 	def train(self):
 		clicklist = GrowingList()
 		clicklist[1] = 0 #initializes it, doesn't like to play nice w/o it 
-		training_file = "./data/trailhead1000"#"data/trailhead20k" #"../data/train"
+		training_file = "./data/trailhead20k"#"data/trailhead20k" #"../data/train"
 		
 		#while training_chunk in read_in_chunks(open(training_file)):
 #		split_chunk = training_chunk.split("\n")
@@ -31,7 +31,6 @@ class SimpleModule:
 			# Update URL Domain Map if we get a new query
 			if (element[2] == "Q"):
 				#starting with 6...
-				startQuery = True
 				for i in range(10):
 					[url, domain] = element[i + 6].split(",")
 					#print("URL: " + url + ", Domain: " + domain)
@@ -46,6 +45,7 @@ class SimpleModule:
 				found = False 
 				#print(str(element[4]))
 
+				startQuery = True
 				#Find the relevant domain name.
 				for (url, domain) in urldomainmap:
 					#Iterate.
@@ -54,9 +54,9 @@ class SimpleModule:
 						#print("what")
 						prevDomain = int(domain)
 						try:
-							clicklist[int(domain)] += 1
+							clicklist[int(domain)] -= 1
 						except:
-							clicklist[int(domain)] = 1
+							clicklist[int(domain)] = -1
 						found = True
 
 				#if not(found):
@@ -67,7 +67,7 @@ class SimpleModule:
 		# Output that file.
 		self.table = clicklist
 
-		f = open("george_module.model", 'w+')
+		f = open("subtractClicks.model", 'w+')
 		f.write("\n".join(str(n) for n in clicklist))
 		f.close()
 
@@ -78,7 +78,7 @@ class SimpleModule:
 	def load_data(self):
 		temptable = GrowingList()
 		i = 0
-		for num in open("simple_module.model"):
+		for num in open("subtractClicks.model"):
 			temptable[i] = int(num)
 			i += 1
 		

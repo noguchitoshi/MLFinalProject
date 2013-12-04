@@ -9,7 +9,7 @@ class GrowingList(list):
 			self.extend([0] * (index + 1 - len(self)))
 		list.__setitem__(self, index, value)
 
-class SimpleClicksModule:
+class SimpleModule:
 	def __init__(self):
 		self.table = None
 
@@ -17,12 +17,14 @@ class SimpleClicksModule:
 	def train(self):
 		clicklist = GrowingList()
 		clicklist[1] = 0 #initializes it, doesn't like to play nice w/o it 
-		training_file = "./data/trailhead20k"#"data/trailhead20k" #"../data/train"
+		training_file = "./data/trailhead1000"#"data/trailhead20k" #"../data/train"
 		
 		#while training_chunk in read_in_chunks(open(training_file)):
 #		split_chunk = training_chunk.split("\n")
 		
-		urldomainmap = [(0, 0)] * 10 
+		urldomainmap = [(0, 0)] * 10
+		prevDomain = 0
+		startQuery = False
 		for line in open(training_file):
 			element = line.split("\t") 
 
@@ -33,6 +35,12 @@ class SimpleClicksModule:
 					[url, domain] = element[i + 6].split(",")
 					#print("URL: " + url + ", Domain: " + domain)
 					urldomainmap[i] = (url, domain)
+			if prevDomain != 0 and startQuery:
+				try:
+					clicklist[prevDomain] += 1
+				except:
+					clicklist[prevDomain] = 1
+				startQuery = False
 
 			# Enter module specific data here. 
 			if (element[2] == "C"):
@@ -40,16 +48,18 @@ class SimpleClicksModule:
 				found = False 
 				#print(str(element[4]))
 
+				startQuery = True
 				#Find the relevant domain name.
 				for (url, domain) in urldomainmap:
 					#Iterate.
 					#print("TEST: " + url +" against: " + element[4])
-					if (long(url) == long(element[4])):
+					if (int(url) == int(element[4])):
 						#print("what")
-						try:
-							clicklist[long(domain)] += 1
+						prevDomain = int(domain)
+						"""try:
+							clicklist[int(domain)] += 1
 						except:
-							clicklist[long(domain)] = 1
+							clicklist[int(domain)] = 1"""
 						found = True
 
 				#if not(found):
@@ -60,7 +70,7 @@ class SimpleClicksModule:
 		# Output that file.
 		self.table = clicklist
 
-		f = open("simple_module.model", 'w+')
+		f = open("addLastClick.model", 'w+')
 		f.write("\n".join(str(n) for n in clicklist))
 		f.close()
 
@@ -71,28 +81,28 @@ class SimpleClicksModule:
 	def load_data(self):
 		temptable = GrowingList()
 		i = 0
-		for num in open("simple_module.model"):
-			temptable[i] = long(num)
+		for num in open("addLastClick.model"):
+			temptable[i] = int(num)
 			i += 1
 		
 		self.table = temptable
 
-	# urldomainquery = [(url, domain)] * 10
-	# output = [(url, domain)] * 10 (RERANKED)
-	def classify(self, urldomainquery):	
+	#by page id I mean index, i'll make it configurable
+	#Takes in a list of 10 (+) pageIds and ranks them.
+	def classify(self, query):	
 		query_score = [0] * 10
 
 		for i in range(10):
-			query_score[i] = self.table[long(urldomainquery[i][1])] #Grab the domain for clicks
+			query_score[i] = self.table[query[i]]
 
-		sorted_list = [i[0] for i in sorted(enumerate(query_score), key=lambda x:x[1])]
+		sorted_list = [i[0] for i in sorted(enumerate(myList), key=lambda x:x[1])]
 
 		new_rank = [0] * 10
 		for j in range(10):
-			new_rank[j] = urldomainquery[sorted_list[j]][0] #return URLs
+			new_rank[j] = query[sorted_list[j]]
 		
 		return new_rank
 
-#simplemodule = None
-#simplemodule = SimpleClicksModule()
-#simplemodule.train()
+
+simplemodule = SimpleModule()
+simplemodule.train()
