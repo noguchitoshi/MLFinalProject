@@ -77,9 +77,11 @@ class SimpleClicksModule:
 		
 		self.table = temptable
 
+	# URL and Domain are given to you as strings
+	# query = [query_i] * (# of terms in query)
 	# urldomainquery = [(url, domain)] * 10
 	# output = [(url, domain)] * 10 (RERANKED)
-	def classify(self, urldomainquery):	
+	def classify(self, query, urldomainquery):	
 		query_score = [0] * 10
 
 		for i in range(10):
@@ -92,6 +94,8 @@ class SimpleClicksModule:
 			new_rank[j] = urldomainquery[sorted_list[j]][0] #return URLs
 		
 		return new_rank
+
+#TODO: Make returned classifications a score out of 1.
 
 #simplemodule = None
 #simplemodule = SimpleModule()

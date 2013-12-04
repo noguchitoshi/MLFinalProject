@@ -16,13 +16,14 @@ for line in open("test"):
 	# this is a test query
 	if (element[2] == 'T'):
 		queryId = element[0]
+		query = element[5].split(",")
 
 		for i in range(10):
 			[url, domain] = element[i + 6].split(",")
 			urldomainmap[i] = (url, domain)
 
 		#rerank the urls w/ the modules
-		simple_rerank = simplemodule.classify(urldomainmap)
+		simple_rerank = simplemodule.classify(query, urldomainmap)
 		#other_reranks...
 
 		#weigh each of the different tests
